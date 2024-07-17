@@ -7,12 +7,14 @@ import (
 	"testing"
 
 	"github.com/Skeeww/Concorde/src/protocols"
+	"github.com/Skeeww/Concorde/src/utils"
 )
 
 func TestWithInt32(t *testing.T) {
 	msg := protocols.NewMessage("/test/a/b/c")
 
-	msg.WithInt32(49)
+	expectedValue := rand.Int31()
+	msg.WithInt32(expectedValue)
 
 	var val int32
 	if err := binary.Read(bytes.NewReader(msg.Arguments), binary.BigEndian, &val); err != nil {
@@ -22,8 +24,8 @@ func TestWithInt32(t *testing.T) {
 	if msg.Type != ",i" {
 		t.Errorf("wrong value, expected %s got %s", ",i", msg.Type)
 	}
-	if val != 49 {
-		t.Errorf("wrong value, expected %d got %d", 49, val)
+	if val != expectedValue {
+		t.Errorf("wrong value, expected %d got %d", expectedValue, val)
 	}
 }
 
@@ -44,6 +46,88 @@ func BenchmarkWithInt32(b *testing.B) {
 		}
 		if val != expectedValue {
 			b.Errorf("wrong value, expected %d got %d", expectedValue, val)
+		}
+	}
+}
+
+func TestWithFloat32(t *testing.T) {
+	msg := protocols.NewMessage("/test/a/b/c")
+
+	expectedValue := rand.Float32()
+	msg.WithFloat32(expectedValue)
+
+	var val float32
+	if err := binary.Read(bytes.NewReader(msg.Arguments), binary.BigEndian, &val); err != nil {
+		t.Error("error while writing in int32 val,", err)
+	}
+
+	if msg.Type != ",f" {
+		t.Errorf("wrong value, expected %s got %s", ",i", msg.Type)
+	}
+	if val != expectedValue {
+		t.Errorf("wrong value, expected %f got %f", expectedValue, val)
+	}
+}
+
+func BenchmarkWithFloat32(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		msg := protocols.NewMessage("/test/a/b/c")
+
+		expectedValue := rand.Float32()
+		msg.WithFloat32(expectedValue)
+
+		var val float32
+		if err := binary.Read(bytes.NewReader(msg.Arguments), binary.BigEndian, &val); err != nil {
+			b.Error("error while writing in int32 val,", err)
+		}
+
+		if msg.Type != ",f" {
+			b.Errorf("wrong value, expected %s got %s", ",i", msg.Type)
+		}
+		if val != expectedValue {
+			b.Errorf("wrong value, expected %f got %f", expectedValue, val)
+		}
+	}
+}
+
+func TestWithString(t *testing.T) {
+	msg := protocols.NewMessage("/test/a/b/c")
+
+	nbChar := rand.Intn(20)
+	expectedValue := utils.RandomString(nbChar)
+	msg.WithString(expectedValue)
+
+	val := string(msg.Arguments[0:nbChar])
+
+	if msg.Type != ",s" {
+		t.Errorf("wrong value, expected %s got %s", ",s", msg.Type)
+	}
+	if val != expectedValue {
+		t.Errorf("wrong value, expected %s got %s", expectedValue, val)
+	}
+	if bufferSize := len(msg.Arguments); bufferSize%protocols.Buffer32 != 0 {
+		t.Errorf("wrong size, expected %d got %d", protocols.Buffer32-(bufferSize%protocols.Buffer32), bufferSize)
+	}
+}
+
+func BenchmarkWithString(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		msg := protocols.NewMessage("/test/a/b/c")
+
+		nbChar := rand.Intn(20)
+		expectedValue := utils.RandomString(nbChar)
+		msg.WithString(expectedValue)
+
+		val := string(msg.Arguments[0:nbChar])
+
+		if msg.Type != ",s" {
+			b.Errorf("wrong value, expected %s got %s", ",s", msg.Type)
+		}
+		if val != expectedValue {
+			b.Errorf("wrong value, expected %s got %s", expectedValue, val)
+		}
+		if bufferSize := len(msg.Arguments); bufferSize%protocols.Buffer32 != 0 {
+			b.Errorf("wrong size, expected %d got %d", protocols.Buffer32-(bufferSize%protocols.Buffer32), bufferSize)
 		}
 	}
 }
