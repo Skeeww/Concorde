@@ -32,7 +32,7 @@ func TestWithInt32(t *testing.T) {
 
 func BenchmarkWithInt32(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		msg := protocols.NewMessage("/test/a/b/c")
+		msg := protocols.NewMessage("/test/a/b/c/d")
 		msg.WithInt32(math.MaxInt32)
 	}
 }
