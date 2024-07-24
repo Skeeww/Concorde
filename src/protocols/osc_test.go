@@ -11,6 +11,11 @@ import (
 	"github.com/Skeeww/Concorde/src/utils"
 )
 
+var (
+	testMessageA = []byte("\x2f\x6f\x73\x63\x69\x6c\x6c\x61\x74\x6f\x72\x2f\x34\x2f\x66\x72\x65\x71\x75\x65\x6e\x63\x79\x00\x2c\x66\x00\x00\x43\xdc\x00\x00")
+	testMessageB = []byte("\x2f\x66\x6f\x6f\x00\x00\x00\x00\x2c\x69\x69\x73\x66\x66\x00\x00\x00\x00\x03\xE8\xFF\xFF\xFF\xFF\x68\x65\x6c\x6c\x6f\x00\x00\x00\x3f\x9d\xF3\xB6\x40\xB5\xB2\x2d")
+)
+
 func TestWithInt32(t *testing.T) {
 	msg := protocols.NewMessage("/test/a/b/c")
 
@@ -78,8 +83,8 @@ func TestWithString(t *testing.T) {
 	if val != expectedValue {
 		t.Errorf("wrong value, expected %s got %s", expectedValue, val)
 	}
-	if bufferSize := len(msg.Arguments); bufferSize%protocols.Buffer32 != 0 {
-		t.Errorf("wrong size, expected %d got %d", protocols.Buffer32-(bufferSize%protocols.Buffer32), bufferSize)
+	if bufferSize := len(msg.Arguments); bufferSize%protocols.BufferSize != 0 {
+		t.Errorf("wrong size, expected %d got %d", protocols.BufferSize-(bufferSize%protocols.BufferSize), bufferSize)
 	}
 }
 
@@ -94,5 +99,31 @@ func BenchmarkWithString52(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		msg := protocols.NewMessage("/test/a/b/c")
 		msg.WithString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	}
+}
+
+func TestWithMessageA(t *testing.T) {
+	msg := protocols.NewMessage("/oscillator/4/frequency")
+
+	msg.WithFloat32(440.0)
+
+	if buf, _ := msg.MarshalBinary(); !bytes.Equal(buf, testMessageA) {
+		t.Errorf("wrong value, expected %x got %x", testMessageA, buf)
+		return
+	}
+}
+
+func TestWithMessageB(t *testing.T) {
+	msg := protocols.NewMessage("/foo")
+
+	msg.WithInt32(1000)
+	msg.WithInt32(-1)
+	msg.WithString("hello")
+	msg.WithFloat32(1.234)
+	msg.WithFloat32(5.678)
+
+	if buf, _ := msg.MarshalBinary(); !bytes.Equal(buf, testMessageB) {
+		t.Errorf("wrong value, expected %x got %x", testMessageB, buf)
+		return
 	}
 }

@@ -11,13 +11,8 @@ const (
 	OscFloat32 = "f"
 	OscString  = "s"
 	OscBlob    = "b"
-	Buffer32   = 32
+	BufferSize = 4
 )
-
-type OSCPacket struct {
-	data []byte
-	size int32
-}
 
 type OSCPacketer interface {
 	encoding.BinaryMarshaler
@@ -27,6 +22,7 @@ type OSCMessage struct {
 	Address   string
 	Type      string
 	Arguments []byte
+	OSCPacketer
 }
 
 func NewMessage(address string) *OSCMessage {
@@ -35,6 +31,15 @@ func NewMessage(address string) *OSCMessage {
 		Type:      ",",
 		Arguments: make([]byte, 0),
 	}
+}
+
+func (message *OSCMessage) MarshalBinary() (data []byte, err error) {
+	var buf []byte = []byte(message.Address)
+	filling32BitsBuffer(&buf)
+	buf = append(buf, []byte(message.Type)...)
+	filling32BitsBuffer(&buf)
+	buf = append(buf, message.Arguments...)
+	return buf, nil
 }
 
 func (message *OSCMessage) WithInt32(val int32) {
@@ -78,7 +83,7 @@ func filling32BitsBuffer(buffer *[]byte) {
 	newBuffer := bytes.NewBuffer(*buffer)
 
 	bufferSize := len(*buffer)
-	bufferSizeTo32 := Buffer32 - (bufferSize % Buffer32)
+	bufferSizeTo32 := BufferSize - (bufferSize % BufferSize)
 
 	for range bufferSizeTo32 {
 		newBuffer.WriteByte(0)
