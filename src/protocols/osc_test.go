@@ -107,8 +107,11 @@ func TestWithMessageA(t *testing.T) {
 
 	msg.WithFloat32(440.0)
 
-	if buf, _ := msg.MarshalBinary(); !bytes.Equal(buf, testMessageA) {
+	if buf, err := msg.MarshalBinary(); !bytes.Equal(buf, testMessageA) {
 		t.Errorf("wrong value, expected %x got %x", testMessageA, buf)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 		return
 	}
 }
@@ -122,8 +125,11 @@ func TestWithMessageB(t *testing.T) {
 	msg.WithFloat32(1.234)
 	msg.WithFloat32(5.678)
 
-	if buf, _ := msg.MarshalBinary(); !bytes.Equal(buf, testMessageB) {
+	if buf, err := msg.MarshalBinary(); !bytes.Equal(buf, testMessageB) || err != nil {
 		t.Errorf("wrong value, expected %x got %x", testMessageB, buf)
+		if err != nil {
+			t.Errorf(err.Error())
+		}
 		return
 	}
 }

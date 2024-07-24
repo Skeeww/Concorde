@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding"
 	"encoding/binary"
+	"fmt"
 )
 
 const (
@@ -39,6 +40,11 @@ func (message *OSCMessage) MarshalBinary() (data []byte, err error) {
 	buf = append(buf, []byte(message.Type)...)
 	filling32BitsBuffer(&buf)
 	buf = append(buf, message.Arguments...)
+
+	if len(buf)%4 != 0 {
+		return nil, fmt.Errorf("wrong binary size (should be a multiple of 4) got %d", len(buf))
+	}
+
 	return buf, nil
 }
 
