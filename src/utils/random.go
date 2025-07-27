@@ -5,13 +5,14 @@ import (
 )
 
 const (
-	charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	charset       = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	charsetLength = len(charset)
 )
 
 func RandomString(length int) string {
 	b := make([]byte, length)
 	for i := range b {
-		b[i] = charset[rand.Int64()%int64(len(charset))]
+		b[i] = charset[rand.Int()%charsetLength]
 	}
 	return string(b)
 }

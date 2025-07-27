@@ -1,0 +1,26 @@
+nodes:
+  - name: quiz_game_webhook
+    protocol: http
+    address: http://localhost:8080/quiz_game
+  - name: lights_osc
+    protocol: osc
+    address: /lights
+  - name: tchat_websocket
+    protocol: websocket
+    address: ws://localhost:8080/tchat
+links:
+  - input: tchat_websocket
+    conditions:
+      - type: "event"
+        value: "answer_correct"
+    actions:
+      - output: lights_osc
+        action:
+          - address: "/lights/on"
+            args:
+              - type: "int32"
+                value: 0
+              - type: "int32"
+                value: 255
+              - type: "int32"
+                value: 0

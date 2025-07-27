@@ -1,4 +1,4 @@
-package protocols_test
+package osc
 
 import (
 	"bytes"
@@ -7,7 +7,6 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/Skeeww/Concorde/src/protocols"
 	"github.com/Skeeww/Concorde/src/utils"
 )
 
@@ -17,7 +16,7 @@ var (
 )
 
 func TestWithInt32(t *testing.T) {
-	msg := protocols.NewMessage("/test/a/b/c")
+	msg := NewOSCMessage("/test/a/b/c")
 
 	expectedValue := rand.Int31()
 	msg.WithInt32(expectedValue)
@@ -37,13 +36,13 @@ func TestWithInt32(t *testing.T) {
 
 func BenchmarkWithInt32(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		msg := protocols.NewMessage("/test/a/b/c/d")
+		msg := NewOSCMessage("/test/a/b/c/d")
 		msg.WithInt32(math.MaxInt32)
 	}
 }
 
 func TestWithFloat32(t *testing.T) {
-	msg := protocols.NewMessage("/test/a/b/c")
+	msg := NewOSCMessage("/test/a/b/c")
 
 	expectedValue := rand.Float32()
 	msg.WithFloat32(expectedValue)
@@ -63,13 +62,13 @@ func TestWithFloat32(t *testing.T) {
 
 func BenchmarkWithFloat32(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		msg := protocols.NewMessage("/test/a/b/c")
+		msg := NewOSCMessage("/test/a/b/c")
 		msg.WithFloat32(math.MaxFloat32)
 	}
 }
 
 func TestWithString(t *testing.T) {
-	msg := protocols.NewMessage("/test/a/b/c")
+	msg := NewOSCMessage("/test/a/b/c")
 
 	nbChar := rand.Intn(20)
 	expectedValue := utils.RandomString(nbChar)
@@ -83,27 +82,27 @@ func TestWithString(t *testing.T) {
 	if val != expectedValue {
 		t.Errorf("wrong value, expected %s got %s", expectedValue, val)
 	}
-	if bufferSize := len(msg.Arguments); bufferSize%protocols.BufferSize != 0 {
-		t.Errorf("wrong size, expected %d got %d", protocols.BufferSize-(bufferSize%protocols.BufferSize), bufferSize)
+	if bufferSize := len(msg.Arguments); bufferSize%BufferSize != 0 {
+		t.Errorf("wrong size, expected %d got %d", BufferSize-(bufferSize%BufferSize), bufferSize)
 	}
 }
 
 func BenchmarkWithString26(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		msg := protocols.NewMessage("/test/a/b/c")
+		msg := NewOSCMessage("/test/a/b/c")
 		msg.WithString("abcdefghijklmnopqrstuvwxyz")
 	}
 }
 
 func BenchmarkWithString52(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		msg := protocols.NewMessage("/test/a/b/c")
+		msg := NewOSCMessage("/test/a/b/c")
 		msg.WithString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
 	}
 }
 
 func TestWithMessageA(t *testing.T) {
-	msg := protocols.NewMessage("/oscillator/4/frequency")
+	msg := NewOSCMessage("/oscillator/4/frequency")
 
 	msg.WithFloat32(440.0)
 
@@ -117,7 +116,7 @@ func TestWithMessageA(t *testing.T) {
 }
 
 func TestWithMessageB(t *testing.T) {
-	msg := protocols.NewMessage("/foo")
+	msg := NewOSCMessage("/foo")
 
 	msg.WithInt32(1000)
 	msg.WithInt32(-1)
