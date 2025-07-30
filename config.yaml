@@ -7,12 +7,12 @@ nodes:
     address: /lights
   - name: tchat_websocket
     protocol: websocket
-    address: ws://localhost:8080/tchat
+    address: ws://localhost:5500
 links:
   - input: tchat_websocket
     conditions:
-      - type: "event"
-        value: "answer_correct"
+      - type: "contains"
+        value: "hey"
     actions:
       - output: lights_osc
         action:

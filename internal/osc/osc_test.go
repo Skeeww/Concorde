@@ -6,8 +6,6 @@ import (
 	"math"
 	"math/rand"
 	"testing"
-
-	"github.com/Skeeww/Concorde/src/utils"
 )
 
 var (
@@ -70,8 +68,8 @@ func BenchmarkWithFloat32(b *testing.B) {
 func TestWithString(t *testing.T) {
 	msg := NewOSCMessage("/test/a/b/c")
 
-	nbChar := rand.Intn(20)
-	expectedValue := utils.RandomString(nbChar)
+	nbChar := 20
+	expectedValue := "helloworldhellowordh"
 	msg.WithString(expectedValue)
 
 	val := string(msg.Arguments[0:nbChar])

@@ -1,16 +1,18 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"os"
+	"strings"
 
-	"github.com/Skeeww/Concorde/src/protocols"
 	"gopkg.in/yaml.v3"
 )
 
 type Node struct {
+	Context  context.Context
 	Name     string
-	Protocol protocols.Protocoler
+	Protocol Protocoler
 	Address  string
 }
 
@@ -24,6 +26,16 @@ type Action struct {
 type Condition struct {
 	Type  string `yaml:"type"`
 	Value string `yaml:"value"`
+}
+
+func (cond *Condition) Eval(val any) bool {
+	switch cond.Type {
+	case "contains":
+		if valToCheck, ok := val.(string); ok {
+			return strings.Contains(valToCheck, cond.Value)
+		}
+	}
+	return false
 }
 
 type Link struct {
@@ -68,22 +80,21 @@ func LoadConfigurationFromYAMLFile(filePath string) (*YamlConfig, error) {
 	return config, nil
 }
 
-func ParseNodesFromYAML(yamlConfig *YamlConfig) (NodesCollection, error) {
+func ParseNodesFromYAML(ctx context.Context, yamlConfig *YamlConfig) (NodesCollection, error) {
 	nodes := make(NodesCollection)
 
 	for _, yamlNode := range yamlConfig.Nodes {
 		node := &Node{
+			Context: ctx,
 			Name:    yamlNode.Name,
 			Address: yamlNode.Address,
 		}
 
-		protocolInstanciateFunction, ok := protocols.ProtocolCollections[yamlNode.Protocol]
+		protocolInstanciateFunction, ok := ProtocolCollections[yamlNode.Protocol]
 		if !ok {
 			return nil, fmt.Errorf("can't find protocol named \"%s\"", yamlNode.Protocol)
 		}
-		node.Protocol = protocolInstanciateFunction(protocols.ProtocolerParameters{
-			Address: node.Address,
-		})
+		node.Protocol = protocolInstanciateFunction(node)
 
 		nodes[yamlNode.Name] = node
 	}
