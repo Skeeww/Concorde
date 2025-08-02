@@ -57,11 +57,7 @@ func NewWebsocketProtocol(node *Node) Protocoler {
 	return protocol
 }
 
-func (proto *WebsocketProtocol) Send(args ...any) {
-	if len(args) == 0 {
-		return
-	}
-
+func (proto *WebsocketProtocol) Send(args any) {
 	if err := proto.Client.WriteJSON(args); err != nil {
 		fmt.Println("error on writeJSON", err)
 		return

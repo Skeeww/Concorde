@@ -20,7 +20,7 @@ type Protocol struct {
 	Callback func(...any)
 }
 
-func (proto *Protocol) Send(args ...any) {
+func (proto *Protocol) Send(args any) {
 	fmt.Println("base struct protocol does not implement Send method")
 }
 
@@ -33,7 +33,7 @@ func (proto *Protocol) CanOutput() bool {
 }
 
 type Protocoler interface {
-	Send(...any)
+	Send(any)
 	CanInput() bool
 	CanOutput() bool
 	GetProtocol() *Protocol

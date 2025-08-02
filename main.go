@@ -41,7 +41,7 @@ func main() {
 				}
 			}
 			for _, action := range link.Actions {
-				action.Output.Protocol.Send(action.Action...)
+				action.Output.Protocol.Send(action.Action)
 			}
 		}
 	}

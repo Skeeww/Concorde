@@ -23,12 +23,8 @@ func NewHttpProtocol(node *Node) Protocoler {
 	}
 }
 
-func (proto *HttpProtocol) Send(args ...any) {
-	if len(args) == 0 {
-		return
-	}
-
-	httpMethod, ok := args[0].(string)
+func (proto *HttpProtocol) Send(args any) {
+	httpMethod, ok := args.(string)
 	if !ok {
 		fmt.Println("missing HTTP method, can't send the message")
 		return
