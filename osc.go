@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
+	"fmt"
 	"net"
 
-	"github.com/go-viper/mapstructure/v2"
+	"github.com/Skeeww/Concorde/internal/osc"
 )
 
 type OSCProtocol struct {
@@ -11,29 +13,52 @@ type OSCProtocol struct {
 	Client net.Conn
 }
 
-type OSCAction struct {
-	Address string         `mapstructure:"address"`
-	Args    map[string]any `mapstructure:",remain"`
+func CreateOSCMessageFromAction(args any) (*osc.OSCMessage, error) {
+	action, ok := args.(map[string]any)
+	if !ok {
+		return nil, errors.New("cannot cast OSC Action args to map")
+	}
+
+	address, ok := action["address"].(string)
+	if !ok {
+		return nil, errors.New("cannot find address of type string in OSC Action args")
+	}
+	message := osc.NewOSCMessage(address)
+
+	arguments, ok := action["args"].([]any)
+	if ok {
+		for _, argument := range arguments {
+			argumentMap := argument.(map[string]any)
+			switch argumentMap["type"].(string) {
+			case "int32":
+				message.WithInt32(int32(argumentMap["value"].(int)))
+			case "float32":
+				message.WithFloat32(float32(argumentMap["value"].(float64)))
+			case "string":
+				message.WithString(argumentMap["value"].(string))
+			default:
+				fmt.Println("unknown osc type", argumentMap["type"])
+			}
+		}
+	}
+
+	return message, nil
 }
 
 func (proto *OSCProtocol) Send(args any) {
-	action := new(OSCAction)
-	if err := mapstructure.Decode(args, action); err != nil {
-		panic(err)
+	message, err := CreateOSCMessageFromAction(args)
+	if err != nil {
+		fmt.Println(err)
+		return
 	}
 
-	// message := osc.NewOSCMessage(action.Address)
-	// for k, v := range action.Args {
-	// 	switch k {
-	// 	case "int32":
-	// 		message.WithInt32(v.(int32))
-	// 	}
-	// }
-	// payload, err := message.MarshalBinary()
-	// if err != nil {
-	// 	panic(err)
-	// }
-	// proto.Client.Write(payload)
+	buffer, err := message.MarshalBinary()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	proto.Client.Write(buffer)
 }
 
 func NewOSCProtocol(node *Node) Protocoler {

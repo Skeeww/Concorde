@@ -1,7 +1,4 @@
 nodes:
-  - name: quiz_game_webhook
-    protocol: http
-    address: http://localhost:8080/quiz_game
   - name: lights_osc
     protocol: osc
     address: 127.0.0.1:57110
@@ -16,11 +13,15 @@ links:
     actions:
       - output: lights_osc
         action:
-          - address: "/lights/on"
-            args:
-              - type: "int32"
-                value: 0
-              - type: "int32"
-                value: 255
-              - type: "int32"
-                value: 0
+          address: "/lights/on"
+          args:
+            - type: "int32"
+              value: 0
+            - type: "int32"
+              value: 255
+            - type: "int32"
+              value: 0
+            - type: "float32"
+              value: 3.1416
+            - type: "string"
+              value: "Hello, OSC!"

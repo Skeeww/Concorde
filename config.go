@@ -20,7 +20,7 @@ type NodesCollection map[string]*Node
 
 type Action struct {
 	Output *Node
-	Action []any
+	Action any
 }
 
 type Condition struct {
@@ -59,8 +59,8 @@ type YamlConfig struct {
 		Input      string      `yaml:"input"`
 		Conditions []Condition `yaml:"conditions"`
 		Actions    []struct {
-			Output string `yaml:"output"`
-			Action []any  `yaml:"action"`
+			Output string         `yaml:"output"`
+			Action map[string]any `yaml:"action"`
 		} `yaml:"actions"`
 	} `yaml:"links"`
 }
