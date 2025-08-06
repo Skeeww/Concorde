@@ -2,7 +2,6 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"net"
 
 	"github.com/Skeeww/Concorde/internal/osc"
@@ -48,13 +47,13 @@ func CreateOSCMessageFromAction(args any) (*osc.OSCMessage, error) {
 func (proto *OSCProtocol) Send(args any) {
 	message, err := CreateOSCMessageFromAction(args)
 	if err != nil {
-		fmt.Println(err)
+		logger.Println("Can't create OSC message from action", args, "reason:", err)
 		return
 	}
 
 	buffer, err := message.MarshalBinary()
 	if err != nil {
-		fmt.Println(err)
+		logger.Println("Can't transform OSC message to binary reason:", err)
 		return
 	}
 
