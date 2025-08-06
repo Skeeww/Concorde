@@ -2,7 +2,9 @@ name: Go
 
 on:
   push:
-    branches: ["develop"]
+    branches: ["develop", "main"]
+    tags:
+      - "v*"
   pull_request:
     branches: ["develop"]
 
