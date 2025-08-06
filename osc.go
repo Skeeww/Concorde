@@ -37,7 +37,7 @@ func CreateOSCMessageFromAction(args any) (*osc.OSCMessage, error) {
 			case "string":
 				message.WithString(argumentMap["value"].(string))
 			default:
-				fmt.Println("unknown osc type", argumentMap["type"])
+				logger.Println("Unknown OSC argument of type", argumentMap["type"])
 			}
 		}
 	}
