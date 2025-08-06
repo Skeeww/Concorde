@@ -33,16 +33,16 @@ jobs:
           go-version: "1.23"
 
       - name: Build Darwin ARM64
-        run: GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o ./build/concorde_arm64_darwin_${{ github.ref_name }} -v -ldflags="-s -w" -i -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
+        run: GOOS=darwin GOARCH=arm64 CGO_ENABLED=0 go build -o ./build/concorde_arm64_darwin_${{ github.ref_name }} -v -ldflags="-s -w" -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
 
       - name: Build Linux ARM64
-        run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o ./build/concorde_arm64_linux_${{ github.ref_name }} -v -ldflags="-s -w" -i -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
+        run: GOOS=linux GOARCH=arm64 CGO_ENABLED=0 go build -o ./build/concorde_arm64_linux_${{ github.ref_name }} -v -ldflags="-s -w" -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
 
       - name: Build Linux AMD64
-        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./build/concorde_amd64_linux_${{ github.ref_name }} -v -ldflags="-s -w" -i -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
+        run: GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build -o ./build/concorde_amd64_linux_${{ github.ref_name }} -v -ldflags="-s -w" -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
 
       - name: Build Windows AMD64
-        run: GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o ./build/concorde_amd64_windows_${{ github.ref_name }}.exe -v -ldflags="-s -w" -i -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
+        run: GOOS=windows GOARCH=amd64 CGO_ENABLED=0 go build -o ./build/concorde_amd64_windows_${{ github.ref_name }}.exe -v -ldflags="-s -w" -x main.go config.go queue.go protocol.go http.go osc.go websocket.go random.go
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4.6.2
