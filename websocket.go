@@ -32,7 +32,7 @@ func NewWebsocketProtocol(node *Node) Protocoler {
 	go func() {
 		defer func() {
 			if err := socket.Close(); err != nil {
-				fmt.Println("socket close errored", err)
+				logger.Println("Socket has been closed, but an error has been issued:", err.Error())
 			}
 		}()
 
@@ -43,7 +43,7 @@ func NewWebsocketProtocol(node *Node) Protocoler {
 			default:
 				msgType, raw, err := socket.ReadMessage()
 				if err != nil {
-					fmt.Println("socket error on read json", err)
+					logger.Println("Can't read parse JSON from the socket, reason:", err.Error())
 					continue
 				}
 				if msgType != 1 {

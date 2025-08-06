@@ -76,6 +76,7 @@ func LoadConfigurationFromYAMLFile(filePath string) (*YamlConfig, error) {
 	if err := decoder.Decode(config); err != nil {
 		return nil, err
 	}
+	logger.Println("Yaml configuration decoded successfully")
 
 	return config, nil
 }
@@ -95,9 +96,11 @@ func ParseNodesFromYAML(ctx context.Context, yamlConfig *YamlConfig) (NodesColle
 			return nil, fmt.Errorf("can't find protocol named \"%s\"", yamlNode.Protocol)
 		}
 		node.Protocol = protocolInstanciateFunction(node)
+		logger.Println("Protocol", node.Name, "instanciated successfully")
 
 		nodes[yamlNode.Name] = node
 	}
+	logger.Println("All nodes have been processed")
 
 	return nodes, nil
 }
@@ -108,11 +111,11 @@ func ParseLinksFromYAML(yamlConfig *YamlConfig, nodes NodesCollection) ([]*Link,
 	for _, yamlLink := range yamlConfig.Links {
 		inputNode, ok := nodes[yamlLink.Input]
 		if !ok {
-			fmt.Println("a link has an unknown input node", yamlLink.Input)
+			logger.Println("A link has an unknown input node", yamlLink.Input)
 			continue
 		}
 		if !inputNode.Protocol.CanInput() {
-			fmt.Println("a link has an unsupported input node", yamlLink.Input)
+			logger.Println("A link has an unsupported input node", yamlLink.Input)
 			continue
 		}
 
@@ -124,11 +127,11 @@ func ParseLinksFromYAML(yamlConfig *YamlConfig, nodes NodesCollection) ([]*Link,
 		for _, yamlAction := range yamlLink.Actions {
 			outputNode, ok := nodes[yamlAction.Output]
 			if !ok {
-				fmt.Println("a link has an unknown output node")
+				logger.Println("A link has an unknown input node", yamlAction.Output)
 				continue
 			}
 			if !outputNode.Protocol.CanOutput() {
-				fmt.Println("a link has an unsupported output node", yamlAction.Output)
+				logger.Println("A link has an unsupported output node", yamlAction.Output)
 				continue
 			}
 
@@ -136,10 +139,12 @@ func ParseLinksFromYAML(yamlConfig *YamlConfig, nodes NodesCollection) ([]*Link,
 				Output: outputNode,
 				Action: yamlAction.Action,
 			})
+			logger.Println("Find action from input node", inputNode.Name, "to output node", outputNode.Name)
 		}
-
+		logger.Println("All actions have been processed for input", inputNode.Name)
 		links = append(links, link)
 	}
+	logger.Println("All links have been processed")
 
 	return links, nil
 }

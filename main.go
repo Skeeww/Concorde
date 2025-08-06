@@ -2,37 +2,46 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
+	"os"
+	"os/signal"
 )
 
+const logFile = "log.txt"
+
+var logger = log.Default()
+
 func main() {
+	logger.SetFlags(log.Ldate | log.Ltime | log.Lmsgprefix)
+	logger.SetOutput(os.Stdout)
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	config, err := LoadConfigurationFromYAMLFile("/Users/noan/Desktop/Dev/Concorde/config.yaml")
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt)
+	defer stop()
+
+	config, err := LoadConfigurationFromYAMLFile("config.yaml")
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 
 	nodes, err := ParseNodesFromYAML(ctx, config)
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 
 	links, err := ParseLinksFromYAML(config, nodes)
 	if err != nil {
-		panic(err)
+		logger.Fatal(err)
 	}
 
 	for _, node := range nodes {
-		fmt.Println("Find node", node.Name, "address:", node.Address)
+		logger.Println("Find node", node.Name, "address is", node.Address)
 	}
 
 	for _, link := range links {
-		fmt.Println("link", link.Input.Name, "on", link.Conditions)
-		for _, action := range link.Actions {
-			fmt.Printf("[%s]-->[%s] send %s", link.Input.Name, action.Output.Name, action.Action)
-		}
+		logger.Println("Find link", link.Input.Name, "triggered on", link.Conditions)
 
 		link.Input.Protocol.GetProtocol().Callback = func(a ...any) {
 			for _, cond := range link.Conditions {
@@ -46,5 +55,7 @@ func main() {
 		}
 	}
 
-	select {}
+	logger.Println("Concorde has lift-off successfully")
+	<-ctx.Done()
+	logger.Println("Concorde is landing")
 }
