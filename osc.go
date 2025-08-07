@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"net"
 
@@ -60,7 +61,7 @@ func (proto *OSCProtocol) Send(args any) {
 	proto.Client.Write(buffer)
 }
 
-func NewOSCProtocol(node *Node) Protocoler {
+func NewOSCProtocol(ctx context.Context, node *Node) Protocoler {
 	udpSocket, err := net.Dial("udp", node.Address)
 	if err != nil {
 		panic(err)

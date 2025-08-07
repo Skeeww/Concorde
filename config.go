@@ -10,7 +10,6 @@ import (
 )
 
 type Node struct {
-	Context  context.Context
 	Name     string
 	Protocol Protocoler
 	Address  string
@@ -86,7 +85,6 @@ func ParseNodesFromYAML(ctx context.Context, yamlConfig *YamlConfig) (NodesColle
 
 	for _, yamlNode := range yamlConfig.Nodes {
 		node := &Node{
-			Context: ctx,
 			Name:    yamlNode.Name,
 			Address: yamlNode.Address,
 		}
@@ -95,7 +93,7 @@ func ParseNodesFromYAML(ctx context.Context, yamlConfig *YamlConfig) (NodesColle
 		if !ok {
 			return nil, fmt.Errorf("can't find protocol named \"%s\"", yamlNode.Protocol)
 		}
-		node.Protocol = protocolInstanciateFunction(node)
+		node.Protocol = protocolInstanciateFunction(ctx, node)
 		logger.Println("Protocol", node.Name, "instanciated successfully")
 
 		nodes[yamlNode.Name] = node
