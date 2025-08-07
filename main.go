@@ -18,8 +18,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	ctx, stop := signal.NotifyContext(ctx, os.Interrupt)
-	defer stop()
+	ctx, _ = signal.NotifyContext(ctx, os.Interrupt)
 
 	config, err := LoadConfigurationFromYAMLFile("config.yaml")
 	if err != nil {
@@ -57,5 +56,6 @@ func main() {
 
 	logger.Println("Concorde has lift-off successfully")
 	<-ctx.Done()
+	cancel()
 	logger.Println("Concorde is landing")
 }

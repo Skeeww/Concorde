@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
@@ -12,7 +13,7 @@ type WebsocketProtocol struct {
 	Client *websocket.Conn
 }
 
-func NewWebsocketProtocol(node *Node) Protocoler {
+func NewWebsocketProtocol(ctx context.Context, node *Node) Protocoler {
 	socket, _, err := websocket.DefaultDialer.Dial(node.Address, http.Header{})
 	if err != nil {
 		panic(err)
@@ -38,13 +39,13 @@ func NewWebsocketProtocol(node *Node) Protocoler {
 
 		for {
 			select {
-			case <-protocol.Node.Context.Done():
+			case <-ctx.Done():
 				return
 			default:
 				msgType, raw, err := socket.ReadMessage()
 				if err != nil {
-					logger.Println("Can't read parse JSON from the socket, reason:", err.Error())
-					continue
+					logger.Println("Failed reading message websocket, reason:", err.Error())
+					return
 				}
 				if msgType != 1 {
 					continue
