@@ -125,7 +125,7 @@ func ParseLinksFromYAML(yamlConfig *YamlConfig, nodes NodesCollection) ([]*Link,
 		for _, yamlAction := range yamlLink.Actions {
 			outputNode, ok := nodes[yamlAction.Output]
 			if !ok {
-				logger.Println("A link has an unknown input node", yamlAction.Output)
+				logger.Println("A link has an unknown output node", yamlAction.Output)
 				continue
 			}
 			if !outputNode.Protocol.CanOutput() {
