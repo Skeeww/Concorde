@@ -1,10 +1,9 @@
 nodes:
-  - name: lights_osc
-    protocol: osc
-    address: 127.0.0.1:57110
   - name: tchat_websocket
     protocol: websocket
     address: ws://localhost:5500
+  - name: capture_demo
+    protocol: artnet
 links:
   - input: tchat_websocket
     conditions:

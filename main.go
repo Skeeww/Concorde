@@ -7,9 +7,13 @@ import (
 	"os/signal"
 )
 
-const logFile = "log.txt"
+const (
+	logFile = "log.txt"
+)
 
-var logger = log.Default()
+var (
+	logger = log.Default()
+)
 
 func main() {
 	logger.SetFlags(log.Ldate | log.Ltime | log.Lmsgprefix)
