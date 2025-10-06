@@ -6,7 +6,7 @@ dist: ./build/
 
 before:
   hooks:
-    - git mod tidy
+    - go mod tidy
 
 builds:
   - id: "concorde"
