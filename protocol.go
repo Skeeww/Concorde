@@ -8,7 +8,6 @@ import (
 var ProtocolCollections = map[string]func(ctx context.Context, node *Node) Protocoler{
 	"osc":       NewOSCProtocol,
 	"http":      NewHttpProtocol,
-	"artnet":    NewArtNetProtocol,
 	"websocket": NewWebsocketProtocol,
 }
 
