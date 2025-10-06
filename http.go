@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 )
@@ -10,7 +11,7 @@ type HttpProtocol struct {
 	Client *http.Client
 }
 
-func NewHttpProtocol(node *Node) Protocoler {
+func NewHttpProtocol(ctx context.Context, node *Node) Protocoler {
 	return &HttpProtocol{
 		Protocol: &Protocol{
 			Name:     "http",

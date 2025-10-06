@@ -1,8 +1,11 @@
 package main
 
-import "fmt"
+import (
+	"context"
+	"fmt"
+)
 
-var ProtocolCollections = map[string]func(node *Node) Protocoler{
+var ProtocolCollections = map[string]func(ctx context.Context, node *Node) Protocoler{
 	"osc":       NewOSCProtocol,
 	"http":      NewHttpProtocol,
 	"websocket": NewWebsocketProtocol,
